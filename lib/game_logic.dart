@@ -1,16 +1,25 @@
+import 'dart:math';
+
 class Player {}
 
 class Game {
+  Random random = Random();
   List<int> grid = [0, 0, 0, 0, 0, 0, 0, 0, 0];
   bool isGameOver = false;
   String _turn = "X";
+  int availablePlays = 9;
 
   String getTurn() => _turn;
   void makePlay(int index, String trn) {
     if (grid[index] == 0) {
       grid[index] = trn == 'X' ? 1 : 2;
-      _turn = trn == 'X' ? 'O' : 'X';
+      availablePlays--;
+      updateState(trn);
     }
+  }
+
+  void updateState(trn) {
+    _turn = trn == 'X' ? 'O' : 'X';
   }
 
   String checkWinning(String trn) {
@@ -39,6 +48,15 @@ class Game {
         return "$trn is the winner";
       }
     }
+    if (availablePlays == 0) isGameOver = true;
     return "";
+  }
+
+  Future<void> autoPlay(String trn) async {
+    int index;
+    do {
+      index = random.nextInt(9);
+    } while (grid[index] != 0);
+    makePlay(index, trn);
   }
 }
